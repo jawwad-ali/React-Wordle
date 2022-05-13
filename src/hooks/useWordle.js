@@ -4,11 +4,14 @@ const useWordle = (solution) => {
 
     const [turn, setTurn] = useState(0)
     const [currentGuess, setCurrentGuess] = useState("")
+
     const [guesses, setGuesses] = useState([...Array(6)]) //Each Guess is an array 
     const [history, setHistory] = useState([]) //Each guess is a string
     const [isCorrect, setIsCorrect] = useState(false)
 
-    // User Guesses
+    const [usedKeys, setUsedKeys] = useState({}) //{ a: 'grey', b: 'green', c: 'yellow'} etc
+
+    // User Guesses  
     const formatGuess = () => {
         let solutionArray = [...solution]
 
@@ -22,11 +25,6 @@ const useWordle = (solution) => {
 
         // Assign green color 
         formattedGuess.forEach((l, i) => {
-
-            // console.log("SL", solutionArray[i])
-            // console.log("GL", formattedGuess[i])
-            // console.log("LLLL", l)
-
             if (solutionArray[i] === l.key) {
                 formattedGuess[i].color = "green"
                 solutionArray[i] = null
@@ -59,6 +57,28 @@ const useWordle = (solution) => {
         setTurn((prevTurn) => {
             return prevTurn + 1
         })
+
+        setUsedKeys((prevUsedKeys) => {
+            formattedGuess.forEach((l) => {
+                // This l.key is for the keyboard key (Go and check db.json to clear the confusion)
+                const currentColor = prevUsedKeys[l.key]
+
+                if (l.color === "green") {
+                    prevUsedKeys[l.key] = "green"
+                    return
+                }
+                if (l.color === "yellow" && currentColor !== "green") {
+                    prevUsedKeys[l.key] = "yellow"
+                    return
+                }
+                if (l.color === 'grey' && currentColor !== ('green' || 'yellow')) {
+                    prevUsedKeys[l.key] = 'grey'
+                    return
+                }
+            })
+            return prevUsedKeys
+        })
+
         setCurrentGuess("")
     }
 
@@ -104,7 +124,7 @@ const useWordle = (solution) => {
         }
     }
 
-    return { turn, currentGuess, guesses, isCorrect, handleKeyup, turn }
+    return { turn, currentGuess, guesses, isCorrect, usedKeys, handleKeyup }
 
 }
 

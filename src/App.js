@@ -4,23 +4,26 @@ import Wordle from "./components/Wordle"
 function App() {
   const [solution, setSolutions] = useState(null)
 
-  useEffect(async () => {
-    try {
-      const url = await fetch("http://localhost:3001/solutions")
-      const res = await url.json()
-      const randomSolution = res[Math.floor(Math.random() * res.length)]
-      setSolutions(randomSolution.word)
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const url = await fetch("http://localhost:3001/solutions")
+        const res = await url.json()
+        const randomSolution = res[Math.floor(Math.random() * res.length)]
+        setSolutions(randomSolution.word)
+      }
+      catch (err) {
+        console.log(err)
+      }
     }
-    catch (err) { 
-      console.log(err)
-    }
+    fetchData()
   }, [setSolutions])
 
   return (
     <div>
       <h1>Wordle (Lingo)</h1>
       {solution && <Wordle solution={solution} />}
-    </div>
+    </div >
   );
 }
 

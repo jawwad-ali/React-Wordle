@@ -3,12 +3,15 @@ import Row from "./Row";
 
 const Grid = ({ currentGuess, turn, guesses }) => {
   return (
-    <> 
-      {guesses.map((g, i) => (
-        <Row key={i} guess={g} />
-      ))}
-    </>
+    <>
+      {guesses.map((g, i) => {  
+        if (turn === i) {
+          return <Row key={i} currentGuess={currentGuess} />;
+        }
+        return <Row key={i} guess={g} />;
+      })}
+    </> 
   );
-};
+}; 
 
 export default Grid;
